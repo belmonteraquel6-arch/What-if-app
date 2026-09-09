@@ -3,25 +3,142 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>What If — Explore Possibilities</title>
+  <title>✨ What If — Explore Possibilities ✨</title>
   <style>
-    body { font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #f0f4f8; }
-    h1 { color: #2c3e50; text-align: center; }
-    .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin: 20px 0; }
-    button { background: #3498db; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 16px; cursor: pointer; width: 100%; margin: 8px 0; }
-    button:hover { background: #2980b9; }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 40px 20px;
+      color: white;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    h1 {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+    .subtitle {
+      text-align: center;
+      font-size: 1.1rem;
+      opacity: 0.9;
+      margin-bottom: 40px;
+    }
+    .card {
+      background: white;
+      color: #2c3e50;
+      padding: 35px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      margin-bottom: 25px;
+    }
+    .card h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #667eea;
+    }
+    .option-btn {
+      width: 100%;
+      padding: 18px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .option-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    .option-a { background: linear-gradient(90deg, #3498db, #2980b9); color: white; }
+    .option-b { background: linear-gradient(90deg, #e74c3c, #c0392b); color: white; }
+    .option-c { background: linear-gradient(90deg, #2ecc71, #27ae60); color: white; }
+    .result-box {
+      display: none;
+      background: #f8f9fa;
+      padding: 25px;
+      border-radius: 12px;
+      margin-top: 20px;
+      border-left: 5px solid #667eea;
+    }
+    .result-box.show { display: block; animation: fadeIn 0.5s; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .reset-btn {
+      background: #95a5a6;
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 8px;
+      margin-top: 20px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 1rem;
+    }
   </style>
 </head>
 <body>
-  <h1>✨ What If ✨</h1>
-  <p style="text-align:center; color:#666;">Explore possibilities & make better decisions</p>
-  
-  <div class="card">
-    <h3>Welcome!</h3>
-    <p>This is your interactive app. Choose an option below:</p>
-    <button onclick="alert('You chose Option A! 🎉')">Option A</button>
-    <button onclick="alert('You chose Option B! 🎉')">Option B</button>
+  <div class="container">
+    <h1>✨ What If ✨</h1>
+    <p class="subtitle">Explore possibilities • Make decisions • Discover more</p>
+
+    <div class="card" id="choiceSection">
+      <h2>What would you do?</h2>
+      
+      <button class="option-btn option-a" onclick="showResult('A')">
+        🌟 Option A — Take the risk & try something new
+      </button>
+      
+      <button class="option-btn option-b" onclick="showResult('B')">
+        🌿 Option B — Stay steady & keep what you have
+      </button>
+      
+      <button class="option-btn option-c" onclick="showResult('C')">
+        🔄 Option C — Wait & see what happens first
+      </button>
+    </div>
+
+    <div class="result-box" id="resultBox">
+      <h3 id="resultTitle"></h3>
+      <p id="resultText"></p>
+      <button class="reset-btn" onclick="resetChoice()">← Choose Again</button>
+    </div>
   </div>
+
+  <script>
+    function showResult(choice) {
+      const results = {
+        A: {
+          title: '🚀 You Chose Option A!',
+          text: 'Brave choice! Taking risks opens doors to new opportunities. Great things never come from comfort zones. Keep exploring! ✨'
+        },
+        B: {
+          title: '🌿 You Chose Option B!',
+          text: 'Wise decision! Stability builds strong foundations. Sometimes the best progress is steady progress. Trust your pace! 💙'
+        },
+        C: {
+          title: '🔄 You Chose Option C!',
+          text: 'Thoughtful choice! Patience gives clarity. Waiting doesn\'t mean stopping — it means preparing. Good things take time! ⏳'
+        }
+      };
+
+      document.getElementById('choiceSection').style.display = 'none';
+      document.getElementById('resultBox').classList.add('show');
+      document.getElementById('resultTitle').innerText = results[choice].title;
+      document.getElementById('resultText').innerText = results[choice].text;
+    }
+
+    function resetChoice() {
+      document.getElementById('choiceSection').style.display = 'block';
+      document.getElementById('resultBox').classList.remove('show');
+    }
+  </script>
 </body>
 </html>
-
