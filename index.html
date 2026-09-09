@@ -79,6 +79,687 @@
     }
     .next-btn { background: #2ecc71; }
     .reset-btn { background: #95a5a6; }
+    .tagalog { color: #764ba2; font-style: italic; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>✨ What If ✨</h1>
+    <p class="subtitle">Explore possibilities • Make decisions • Discover more</p>
+    <p class="counter" id="counter">Loading...</p>
+
+    <div class="card" id="questionCard">
+      <p class="question" id="qText"></p>
+      <button class="option-btn opt-a" onclick="pick('A')" id="btnA"></button>
+      <button class="option-btn opt-b" onclick="pick('B')" id="btnB"></button>
+      <button class="option-btn opt-c" onclick="pick('C')" id="btnC"></button>
+    </div>
+
+    <div class="result-box" id="resultBox">
+      <h3 id="choiceTitle">✨ Your Choice ✨</h3>
+      <p class="result-text" id="resultText"></p>
+      <div class="btn-row">
+        <button class="next-btn" onclick="goNext()">➡️ Next Question</button>
+        <button class="reset-btn" onclick="startOver()">🔄 Start Over</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const allQuestions = [
+      // --- TAGALOG QUESTIONS ---
+      {
+        q: "Paano kung alam mong ginagamit ka lang nila pero takot kang mawalan ng kaibigan?",
+        a: "💔 Mananatili ka na lang kahit nasasaktan ka na",
+        b: "🚨 Lalayuan mo sila kahit masakit",
+        c: "💬 Sasabihin mo ang totoo kahit mag-away kayo",
+        rA: "Minsan masakit palayain, pero hindi ka nababawasan ng halaga dahil sa pagpili sa sarili mo. Hindi ka dapat maging opsyon lang. 💙✨",
+        rB: "Matapang ka. Ang pag-alis sa taong hindi ka pinapahalagahan ay hindi pagkatalo — ito ay pagmamahal sa sarili. Maghihilom din ito. 💛✨",
+        rC: "Karapat-dapat kang respetuhin. Kung masira ang samahan dahil sa katotohanan, hindi ito tunay na samahan. Salamat sa pagtindig para sa sarili mo. 💫✨"
+      },
+      {
+        q: "Paano kung ang taong mahalaga sa iyo ay mas masaya kapag wala ka?",
+        a: "🌙 Magtitiis ka na lang manahimik sa gilid nila",
+        b: "💗 Hahayaan mo silang umalis para sa ikaliligaya nila",
+        c: "🤗 Magtatanong ka kung may pagbabago ba sa pakiramdam nila",
+        rA: "Hindi mo kailangang manatili sa lugar kung saan hindi ka kasya. Ang pagpapahalaga sa iba ay hindi dapat maging dahilan para kalimutan ang sarili. 💎✨",
+        rB: "Ang tunay na pagmamahal ay handang magpalaya kahit masakit. Ngunit tandaan — ang pag-alis nila ay hindi kabawasan sa iyong halaga. Ikaw ay mahalaga rin. 🌸✨",
+        rC: "Karapat-dapat kang malaman ang totoo. Kung kailangan mong magbago para maging mahalaga, hindi ka talaga nakikita nang totoo. Ikaw ay sapat na. ✨"
+      },
+      {
+        q: "Paano kung pagod ka na maging matapang at malakas para sa lahat?",
+        a: "🛡️ Magpapatuloy ka pa rin kahit wala nang lakas",
+        b: "🤍 Aaminin mong pagod ka na at magpapahinga",
+        c: "🫂 Hahanap ka ng taong maaasahan mo rin",
+        rA: "Ang pagiging malakas ay hindi nangangahulugang hindi ka pwedeng mapagod. Hindi mo kailangang buhatin ang lahat nang mag-isa. Pahinga ka na. 💙✨",
+        rB: "Ang pagpapahinga ay hindi pagsuko. Ito ay pag-aalaga sa sarili. Karapat-dapat kang huminga, huminto, at maghilom. Ikaw ay tao rin, hindi makina. 🕊️✨",
+        rC: "Ang paghingi ng tulong ay hindi kahinaan — ito ay katapangan. Hindi mo kailangang mag-isa sa laban. May mga taong handang magbuhat kasama ka. 💛✨"
+      },
+      {
+        q: "Paano kung naririnig mo silang pinag-uusapan ka sa likod mo?",
+        a: "😔 Tatahimik ka na lang para hindi magkaroon ng gulo",
+        b: "💪 Hindi ka magpapabago kahit ano pa ang sabihin nila",
+        c: "💬 Haharapin mo sila nang mahinahon",
+        rA: "Ang katahimikan ay hindi kahinaan — minsan ito ay pagpili sa kapayapaan. Ngunit huwag mong hayaang baguhin ka ng sinasabi nila. Kilala mo ang sarili mo. 💎✨",
+        rB: "Ang opinyon nila ay hindi katotohanan. Ikaw ang may-ari ng kwento mo. Ang tunay na halaga mo ay hindi nakasalalay sa bibig ng iba. ✨",
+        rC: "Ang katotohanan ay nagpapalaya sa atin. Kung haharapin mo ito, gawin nang may pagpapakumbaba at tapang. Hindi mo kailangang patunayan ang halaga mo. 💫✨"
+      },
+      {
+        q: "Paano kung pakiramdam mo ay napapalitan ka na?",
+        a: "🌧️ Susubukan mong maging katulad ng kapalit mo",
+        b: "💔 Tatanggapin mo at hahayaan mo na lang",
+        c: "🌟 Mananatili ka kung sino ka — hindi ka kopya ng iba",
+        rA: "Hindi mo kailangang maging ibang tao para mahalin. Ang pagiging totoo mo ang pinakamahalagang maibibigay mo. Kung hindi nila makita iyon, hindi ikaw ang nawalan. 💫✨",
+        rB: "Ang pagpapalit sa iyo ay kanilang pagkukulang, hindi sa iyo. Ikaw ay hindi bagay na pwedeng palitan — ikaw ay natatangi at walang katulad. 💎✨",
+        rC: "Tama ka. Ang tunay na pagmamahal ay hindi naghahanap ng kapalit — ito ay pinipili ka araw-araw. Kung hindi ka pinipili, may darating na pipiliin ka nang buong puso. 💙✨"
+      },
+      {
+        q: "Paano kung ikaw ang laging nakakaintindi pero walang nakakaintindi sa iyo?",
+        a: "🫂 Magpapatuloy ka pa ring magbigay kahit walang sumusukli",
+        b: "💙 Matututo kang intindihin at pahalagahan ang sarili mo muna",
+        c: "⏳ Maghihintay ka na lang na may makakaintindi sa iyo balang araw",
+        rA: "Ang kabutihan mo ay hindi dapat maging dahilan para abusuhin ka. Ang pagbibigay ay maganda, pero kailangan mo ring matutong magtakda ng hangganan. Mahalin mo rin ang sarili mo. 💛✨",
+        rB: "Ikaw ang pinakamahalagang taong kailangang intindihin ka. Kapag ikaw ang nagmamahal sa sarili mo, hindi ka na maghahanap sa iba. Ito ang tunay na kalayaan. 🕊️✨",
+        rC: "Darating din sila. Ngunit huwag mong kalimutang samahan mo rin ang sarili mo habang naghihintay. Ikaw ay hindi nag-iisa. 💫✨"
+      },
+      {
+        q: "Paano kung ang pagmamahal mo ay sapat na para sa iyo pero hindi para sa kanila?",
+        a: "❤️ Maghihintay ka na magbago ang isip nila",
+        b: "🌸 Tatanggapin mo na hindi ka nila mapipili kahit kailan",
+        c: "🌅 Magmamahal ka rin sa sarili mo nang higit pa sa kanila",
+        rA: "Ang paghihintay sa taong hindi handang magmahal pabalik ay parang paghihintay sa barkong lumipad. Hindi ito mangyayari. Pahalagahan mo ang puso mo. 💙✨",
+        rB: "Ang pagtanggap ay masakit, pero ito ang simula ng paghilom. Hindi ibig sabihin na kulang ka — ibig sabihin lang, hindi kayo para sa isa't isa. Darating ang taong pipiliin ka araw-araw. ✨",
+        rC: "Ito ang pinakamahalagang aral: ang pagmamahal sa sarili ang pundasyon ng lahat. Kapag puno ka, hindi ka na naghahanap sa iba. Ikaw ay sapat na. 💎✨"
+      },
+      {
+        q: "Paano kung sa bawat pagtawa mo, may itinatagong sakit sa loob?",
+        a: "😃 Itutuloy mo lang ang pagngiti para hindi mag-alala ang iba",
+        b: "🫂 Magkukuwento ka sa taong mapagkakatiwalaan mo",
+        c: "🌿 Magpapahinga ka at hahayaan mong lumabas ang nararamdaman mo",
+        rA: "Ang pagiging matatag ay hindi nangangahulugang hindi ka pwedeng maging mahina. Hindi mo kailangang buhatin nang mag-isa. May mga taong handang makinig sa iyo. 💛✨",
+        rB: "Ang pagtitiwala ay tapang. Ang pagbabahagi ng bigat ay nagpapagaan nito. Hindi ka nag-iisa sa laban na ito. Salamat sa pagtitiwala. 🤝✨",
+        rC: "Ang pag-iyak ay hindi kahinaan — ito ay paglilinis ng puso. Karapat-dapat kang maging totoo sa nararamdaman mo. Magiging maayos din ang lahat. 🌧️→☀️✨"
+      },
+      {
+        q: "Paano kung pakiramdam mo ay pabigat ka sa pamilya mo?",
+        a: "🥺 Itatago mo na lang ang lahat para hindi sila mag-alala",
+        b: "💙 Susubukan mong maging mas mabuti para maging kapaki-pakinabang",
+        c: "🫂 Maiintindihan mong hindi ka pabigat — ikaw ay biyaya",
+        rA: "Ang pagmamahal sa pamilya ay hindi nasusukat sa pagtago ng problema. Gusto nilang makita ka, hindi ang pagiging perpekto mo. Nandiyan sila para sa iyo. 💫✨",
+        rB: "Hindi mo kailangang patunayan ang halaga mo. Ang pag-iral mo ay sapat na. Ang pagmamahal nila ay hindi nakabase sa kung ano ang maibibigay mo — kundi sa kung sino ka. 💎✨",
+        rC: "Ikaw ay hindi pabigat. Ikaw ay mahalaga, minamahal, at kailangan. Minsan hindi nila ito nasasabi, pero totoo ito. Maniwala ka. 💙✨"
+      },
+      {
+        q: "Paano kung ang taong nagpasaya sa iyo ay siya ring dahilan ng pagluha mo?",
+        a: "💔 Mananatili ka dahil sa alaala ng dating saya",
+        b: "🌅 Aalis ka kahit mahirap — para sa sarili mong kapayapaan",
+        c: "💬 Sasabihin mo sa kanila kung paano ka nila nasasaktan",
+        rA: "Ang dating saya ay hindi sapat na dahilan para manatili sa sakit ngayon. Hindi mo kailangang magtiis sa pangakong hindi na natutupad. Karapat-dapat kang maging masaya nang totoo. ✨",
+        rB: "Ang pag-alis ay hindi pagsuko — ito ay pagpili sa sarili. Masakit man ngayon, darating ang araw na magpapasalamat ka sa sarili mo dahil naglakas-loob ka. Maghilom ka. 💛✨",
+        rC: "Karapat-dapat kang respetuhin. Kung hindi nila alam na nasasaktan ka, may pag-asa. Pero kung alam nila at hindi sila nagbago — doon ka na lumisan. Mahalin mo ang sarili mo. 💫✨"
+      },
+      // --- ENGLISH QUESTIONS ---
+      {
+        q: "What if you could instantly master any skill?",
+        a: "🎯 Learn a practical skill for your future",
+        b: "🎨 Master something purely for joy",
+        c: "📚 Learn something just to understand the world better",
+        rA: "Smart choice! Useful skills open doors everywhere. 💪✨",
+        rB: "Wonderful choice! Joy is the best reason to learn. 💙✨",
+        rC: "Wise choice! Understanding is its own reward. 🕯️✨"
+      },
+      {
+        q: "What if you found a treasure chest buried in your backyard?",
+        a: "💰 Save and invest it for your future",
+        b: "🤝 Share it with family and those in need",
+        c: "🏠 Improve your home and help your community",
+        rA: "Practical thinking! Build a strong foundation first. 🏗️✨",
+        rB: "Kind heart! Shared joy doubles itself. 💚✨",
+        rC: "Beautiful choice! Making where you live better benefits everyone. 🏡✨"
+      },
+      {
+        q: "What if you knew you couldn't fail — what would you try?",
+        a: "🚀 Chase your biggest dream career",
+        b: "❤️ Follow something you love even if it seems hard",
+        c: "📖 Learn something completely new and scary",
+        rA: "Go for it! Fear is the only real failure. 🔥✨",
+        rB: "Passion is power! Follow your heart always. 💫✨",
+        rC: "Brave choice! Growth happens outside comfort zones. 🌱✨"
+      },
+      {
+        q: "What if you could travel anywhere right now?",
+        a: "🏔️ Explore nature — mountains, forests, oceans",
+        b: "🏙️ Experience cities — cultures, food, people",
+        c: "🏝️ Find a quiet peaceful place to rest and think",
+        rA: "Nature heals and inspires. 🌿✨",
+        rB: "People make the world rich. 🌍✨",
+        rC: "Peace is precious. Quiet moments reveal life's truths. 🌅✨"
+      },
+      {
+        q: "What if you could give your younger self one piece of advice?",
+        a: "💪 Be brave — take more chances",
+        b: "💙 Be kinder to yourself — you're doing better than you think",
+        c: "⏳ Don't rush — everything happens in its own time",
+        rA: "Courage grows with practice. Every brave step counts! ⚡✨",
+        rB: "You are enough exactly as you are. Be your own best friend. 🌸✨",
+        rC: "Patience is power. Trust your pace — you're right on time! 🐢✨"
+      },
+      {
+        q: "What if money didn't matter — what would you do?",
+        a: "🌍 Help people and make a real difference",
+        b: "🎨 Create, make, and express yourself freely",
+        c: "👨‍👩‍👧‍👦 Spend time with the people you love most",
+        rA: "Your heart is pure. The world needs YOU! 🌻✨",
+        rB: "Creation is your gift — it outlives you forever! 🎭✨",
+        rC: "Love is life's greatest treasure. Cherish every moment! 💞✨"
+      },
+      {
+        q: "What if you could see one year into your future?",
+        a: "🔮 Look ahead to prepare better now",
+        b: "✨ Keep it a surprise — let life unfold naturally",
+        c: "🧭 Just see that you'll be okay — nothing more",
+        rA: "Preparation shows wisdom — but YOU shape your future! 🧭✨",
+        rB: "Mystery makes life magical. Trust your journey! 🌈✨",
+        rC: "Peace of mind is the greatest gift. You'll be okay. 🕊️✨"
+      },
+      {
+        q: "What if you could master any language instantly?",
+        a: "🌏 Speak to connect with everyone around the world",
+        b: "📜 Read books and stories in their original language",
+        c: "🎤 Understand songs and poetry deeply",
+        rA: "Every new language opens a new heart to you! 💬✨",
+        rB: "Hear the author's true voice — unfiltered. 📖✨",
+        rC: "Beauty speaks in every tongue. 🎶✨"
+      },
+      {
+        q: "What if you could have any superpower?",
+        a: "⚡ Speed — reach everywhere and everyone instantly",
+        b: "🌱 Growth — help things and people flourish wherever you go",
+        c: "🛡️ Protection — keep everyone you care about safe",
+        rA: "Being there matters more than being fast! ⚡✨",
+        rB: "The quietest power changes everything. 🌳✨",
+        rC: "Your love is already their greatest protection. 💛✨"
+      },
+      {
+        q: "What if you could change one thing about how you think?",
+        a: "💭 Stop worrying so much what others think",
+        b: "🌟 Believe more deeply in your own potential",
+        c: "😊 Be more gentle with yourself when things go wrong",
+        rA: "Freedom begins when you stop seeking approval. 🕊️✨",
+        rB: "Your potential is limitless — only you limit it! 🚀✨",
+        rC: "Self-compassion is the foundation of strength. 💫✨"
+      },
+      {
+        q: "What if you met your future self from 10 years ahead?",
+        a: "💬 Ask for wisdom and advice",
+        b: "❤️ Tell them they're doing great and to keep going",
+        c: "🤝 Thank them for never giving up",
+        rA: "Listen deeply — but YOU write the story! ✍️✨",
+        rB: "Be kind to yourself through every step. 💫✨",
+        rC: "Your future self is proud of you already. 💎✨"
+      },
+      {
+        q: "What if every dream you wrote down actually came true?",
+        a: "📝 Write bigger, bolder dreams immediately",
+        b: "🙏 Be thoughtful and careful about what you wish for",
+        c: "✨ Focus on dreams that help others too",
+        rA: "Aim high! The universe is bigger than your doubts. 🌌✨",
+        rB: "Thoughts are powerful — choose them with care. 💎✨",
+        rC: "Shared dreams shine the brightest. 🌟✨"
+      },
+      {
+        q: "What if you could start over completely fresh today?",
+        a: "🔄 Leave mistakes behind, keep only the lessons",
+        b: "✨ Bring everything — scars, joys, and stories",
+        c: "🌱 Take what matters most and build something new",
+        rA: "Mistakes are tuition — you learned, now shine! 🏆✨",
+        rB: "Your story is your superpower. Don't change it! 🦋✨",
+        rC: "New beginnings are always possible. 🌅✨"
+      },
+      {
+        q: "What if you could know the absolute truth about one thing?",
+        a: "🔭 How the universe began",
+        b: "💜 What makes people truly happy",
+        c: "🌿 What is the meaning of life",
+        rA: "Wonder is the beginning of wisdom. 🌌✨",
+        rB: "Connection is the secret to happiness. 💞✨",
+        rC: "You give life its own meaning. ✨"
+      },
+      {
+        q: "What if you could fix one global problem?",
+        a: "🌍 End hunger and poverty",
+        b: "🌿 Heal the planet and climate",
+        c: "🤝 Bring peace and understanding between people",
+        rA: "Justice is the foundation of peace. ⚖️✨",
+        rB: "We protect what we love — love the Earth! 🌏✨",
+        rC: "Kindness bridges every divide. 🌁✨"
+      },
+      {
+        q: "What if you could live in any time period?",
+        a: "🏰 The past — see history firsthand",
+        b: "🚀 The future — see what humanity becomes",
+        c: "☀️ Right now — this exact moment in time",
+        rA: "We stand on the shoulders of those before us. 🏛️✨",
+        rB: "The future is built by what we do TODAY. 🔭✨",
+        rC: "Now is the only moment you truly own. ⏰✨"
+      },
+      {
+        q: "What if you could communicate with animals?",
+        a: "🐾 Understand what they feel and need",
+        b: "🦉 Learn their ancient wisdom and ways",
+        c: "🐶 Hear what they love most about you",
+        rA: "Empathy connects all living things. 🤝✨",
+        rB: "Nature has been teaching us all along. 🌲✨",
+        rC: "They already love you unconditionally. 🐾✨"
+      },
+      {
+        q: "What if you never had to sleep again?",
+        a: "⏳ Use the extra time to create and build",
+        b: "☀️ Enjoy peaceful nights and beautiful sunrises",
+        c: "💤 Still rest — just in a different way",
+        rA: "What would you build with those extra hours? ⏰✨",
+        rB: "Quiet moments are where life reveals itself. 🌅✨",
+        rC: "Rest is not lazy — it's necessary. 🧘✨"
+      },
+      {
+        q: "What if you could keep one age forever?",
+        a: "🌻 Stay young, curious, and full of wonder",
+        b: "🦅 Grow wise, experienced, and confident",
+        c: "💛 Stay exactly as you are right now",
+        rA: "Curiosity keeps you forever young. 🔍✨",
+        rB: "Wisdom is life's greatest reward. 🦉✨",
+        rC: "You are perfect exactly as you are. 💫✨"
+      },
+      {
+        q: "What if you could preserve one memory forever?",
+        a: "💖 A moment of pure love",
+        b: "🏆 A moment you were proudest of",
+        c: "🤗 A moment of genuine connection",
+        rA: "Love is the only thing that truly lasts. 💗✨",
+        rB: "Pride in yourself is self-love. 🥇✨",
+        rC: "We are remembered by how we made others feel. 💌✨"
+      },
+      {
+        q: "What if you could master any instrument instantly?",
+        a: "🎸 Play to express what words cannot",
+        b: "🎹 Play to bring joy and comfort to others",
+        c: "🎵 Play just for the pure joy of making sound",
+        rA: "Music says what words cannot. 🎵✨",
+        rB: "Shared music heals hearts. 🎶✨",
+        rC: "Joy is its own instrument. ✨"
+      },
+      {
+        q: "What if you could change your appearance completely?",
+        a: "✨ Try being someone totally new and different",
+        b: "💙 Keep your face — change your world instead",
+        c: "👑 Realize your beauty comes from within",
+        rA: "Real change happens on the inside. 💫✨",
+        rB: "Your appearance is not your identity. 👑✨",
+        rC: "You are beautiful just being YOU. 💎✨"
+      },
+      {
+        q: "What if you could relive one moment?",
+        a: "🎉 Celebrate a special victory",
+        b: "🤗 Hug someone you miss",
+        c: "💬 Say what you didn't get to say",
+        rA: "Celebrate every win — big or small! 🎊✨",
+        rB: "Tell people you love them OFTEN. 💌✨",
+        rC: "The right words always reach the right heart. 💫✨"
+      },
+      {
+        q: "What if you could remove one fear forever?",
+        a: "😨 Fear of failure",
+        b: "😰 Fear of being judged",
+        c: "😢 Fear of losing someone you love",
+        rA: "Failure is just feedback — keep going! 🔄✨",
+        rB: "Their opinion is not your reality. 🪞✨",
+        rC: "Love makes loss worth bearing. 💛✨"
+      },
+      {
+        q: "What if you could learn from the best in any field?",
+        a: "🏆 Sports, discipline, and leadership",
+        b: "📚 Arts, creativity, and expression",
+        c: "❤️ Kindness, patience, and understanding",
+        rA: "Discipline creates champions. 🏅✨",
+        rB: "Creativity is seeing what others miss. 🎨✨",
+        rC: "Kindness is the highest mastery. 💛✨"
+      },
+      {
+        q: "What if you could give one gift to the whole world?",
+        a: "💚 Kindness and compassion",
+        b: "💡 Knowledge and wisdom",
+        c: "🌈 Hope and courage",
+        rA: "Kindness costs nothing but changes everything. 🌿✨",
+        rB: "Knowledge frees people. 🕯️✨",
+        rC: "Hope is the greatest gift of all. ✨"
+      },
+      {
+        q: "What if you could pause time whenever you want?",
+        a: "⏸️ Catch your breath and rest deeply",
+        b: "🧠 Study and learn something fully",
+        c: "💭 Reflect and think clearly",
+        rA: "Rest is not lazy — it's necessary. 🧘✨",
+        rB: "Deep understanding takes time. 📚✨",
+        rC: "Quiet reflection brings clarity. 🔮✨"
+      },
+      {
+        q: "What if you could plant one tree that grows instantly?",
+        a: "🌳 Shade and shelter for all who need it",
+        b: "🌸 Beautiful flowers everywhere you look",
+        c: "🍊 Fruit to feed everyone who is hungry",
+        rA: "Service gives lasting shelter. 🌲✨",
+        rB: "Beauty nourishes the soul. 🌺✨",
+        rC: "Generosity feeds the body and heart. 🍎✨"
+      },
+      {
+        q: "What if you could be an expert in one day?",
+        a: "💻 Technology and innovation that helps people",
+        b: "❤️ Emotional intelligence and connection",
+        c: "🌱 Sustainability and healing the Earth",
+        rA: "Build tools that lift others up. 🛠️✨",
+        rB: "Understanding people is the true superpower. 🤝✨",
+        rC: "Healing our home heals us all. 🌍✨"
+      },
+      {
+        q: "What if you could apologize to your younger self?",
+        a: "💙 I'm sorry for being so hard on you",
+        b: "💪 Thank you for not giving up",
+        c: "🤗 You did the best you could with what you knew",
+        rA: "Be gentle with your past self. 🕊️✨",
+        rB: "Your resilience is amazing. 💎✨",
+        rC: "Forgiveness sets you free. 🌈✨"
+      },
+      {
+        q: "What if you could see beauty in everything?",
+        a: "🌧️ Even in sadness and storms",
+        b: "🌱 Even in mistakes and struggles",
+        c: "🌫️ Even in uncertainty and doubt",
+        rA: "Rain nourishes growth. 🌧️✨",
+        rB: "Mistakes are just how we learn. 🌱✨",
+        rC: "Doubt clears when you keep walking. 🌤️✨"
+      },
+      {
+        q: "What if you could protect one person forever?",
+        a: "👨‍👩‍👧‍👦 Your family",
+        b: "🌍 Someone you haven't met yet",
+        c: "💙 Your future self",
+        rA: "Love begins at home. 🏡✨",
+        rB: "Kindness to strangers changes the world. 🌏✨",
+        rC: "Be kind to yourself first. 💫✨"
+      },
+      {
+        q: "What if you could speak one truth to everyone?",
+        a: "💫 You are enough exactly as you are",
+        b: "❤️ Kindness matters more than success",
+        c: "🌟 Your life has purpose and meaning",
+        rA: "Believe this — it's the most important truth! ✨",
+        rB: "Success without kindness is empty. 💛✨",
+        rC: "You matter more than you know. 💎✨"
+      },
+      {
+        q: "What if you could hear your own heart clearly?",
+        a: "🎯 What do I truly want?",
+        b: "🧭 What is my next right step?",
+        c: "💙 What makes me feel most alive?",
+        rA: "Your heart knows what matters most. 💓✨",
+        rB: "You don't need the whole map — just the next step! 🗺️✨",
+        rC: "Follow your joy — it knows the way. ✨"
+      },
+      {
+        q: "What if you could start a new tradition today?",
+        a: "📖 Daily gratitude practice",
+        b: "🤝 Small acts of kindness every day",
+        c: "💙 Being true to yourself always",
+        rA: "Gratitude turns what we have into enough. 🙏✨",
+        rB: "Small daily kindnesses build a beautiful life. 💫✨",
+        rC: "Authenticity is the best habit. ✨"
+      },
+      {
+        q: "What if you could rewrite one rule?",
+        a: "💛 Everyone deserves kindness",
+        b: "🌟 Everyone gets to shine",
+        c: "🤝 We rise by lifting others",
+        rA: "Kindness should be the default setting. 💛✨",
+        rB: "There's room for everyone at the top. 🌈✨",
+        rC: "Your success doesn't require anyone else's failure. 🤲✨"
+      },
+      {
+        q: "What if you could meet your greatest inspiration?",
+        a: "💬 Ask them how they kept going when it was hard",
+        b: "❤️ Tell them how they changed your life",
+        c: "🤝 Realize they were human too",
+        rA: "They also doubted — keep going anyway! 🏔️✨",
+        rB: "People need to know they matter. 💌✨",
+        rC: "If they can do it, so can YOU! 💪✨"
+      },
+      {
+        q: "What if you could create one new holiday?",
+        a: "🎉 Kindness Day",
+        b: "🌱 Growth Day",
+        c: "💙 Self-Love Day",
+        rA: "Celebrate goodness openly! 💝✨",
+        rB: "Honor how far you've come. 🌱✨",
+        rC: "Be your own valentine. 💌✨"
+      },
+      {
+        q: "What if you could keep only one memory?",
+        a: "💖 Being loved deeply",
+        b: "🔥 Overcoming something hard",
+        c: "☀️ A day of pure joy and peace",
+        rA: "Love is the anchor through every storm. ⚓✨",
+        rB: "Strength proven is strength gained. 🦅✨",
+        rC: "Peace is the treasure. 🕊️✨"
+      },
+      {
+        q: "What if you could make one wish come true for someone else?",
+        a: "🌈 Their biggest dream comes true",
+        b: "🛡️ They never feel alone again",
+        c: "💙 They see themselves as wonderful",
+        rA: "Helping others soar lifts you too. 🦅✨",
+        rB: "Connection cures loneliness. Be there. 🤝✨",
+        rC: "Help them see what you see in them. 💎✨"
+      },
+      {
+        q: "What if you could understand your dreams perfectly?",
+        a: "🔮 What is my subconscious telling me?",
+        b: "✨ What do I truly desire deep down?",
+        c: "🌙 What do I need to heal?",
+        rA: "Your mind works even when you rest. 🌙✨",
+        rB: "Desire is your compass — follow it. 🧭✨",
+        rC: "Healing begins when you listen. 💫✨"
+      },
+      {
+        q: "What if you could give your future self one gift?",
+        a: "📖 Wisdom from today's experiences",
+        b: "💪 Confidence to keep going no matter what",
+        c: "❤️ Love and kindness from your present heart",
+        rA: "Your present builds your future. 🏗️✨",
+        rB: "You will make it — trust the process. 🌅✨",
+        rC: "You are your own longest companion. 💫✨"
+      },
+      {
+        q: "What if you could see the good in every situation?",
+        a: "🌱 What can I learn from this?",
+        b: "💫 How can I grow through this?",
+        c: "🙏 What is hidden here that I can't see yet?",
+        rA: "Every situation carries a lesson. 📝✨",
+        rB: "Growth is the only real goal. 🌿✨",
+        rC: "Trust that things are working out. 🔮✨"
+      },
+      {
+        q: "What if you could leave one mark on the world?",
+        a: "🏛️ Something that lasts forever",
+        b: "💙 Kindness that ripples outward",
+        c: "✨ The example of your integrity",
+        rA: "Legacy is not what we take — it's what we leave. 🏗️✨",
+        rB: "One kind act can touch thousands. 🌊✨",
+        rC: "How you live matters more than what you build. 💫✨"
+      },
+      {
+        q: "What if you could start your day with one reminder?",
+        a: "☀️ Today is a fresh new start",
+        b: "💙 I am worthy of good things",
+        c: "🌟 I am enough just as I am",
+        rA: "Every sunrise offers a clean slate. 🌅✨",
+        rB: "You deserve the best life offers. 🌟✨",
+        rC: "This is the truth — believe it! 💎✨"
+      },
+      {
+        q: "What if you could define success for yourself?",
+        a: "❤️ Being happy and at peace",
+        b: "🤝 Helping others thrive too",
+        c: "✨ Living authentically and truly",
+        rA: "Peace is the ultimate success. 🕊️✨",
+        rB: "Shared success is multiplied success. 🌱✨",
+        rC: "No one gets to define you but YOU. 👑✨"
+      },
+      {
+        q: "What if you could hear one encouraging message always?",
+        a: "💪 You are doing better than you think",
+        b: "🚀 Keep going — you're closer than it feels",
+        c: "💙 Be patient — everything will fall into place",
+        rA: "Be your own biggest fan. 🎉✨",
+        rB: "Every step forward counts — don't stop! 🏁✨",
+        rC: "Trust the timing of your life. ⏳✨"
+      },
+      {
+        q: "What if you could trust yourself completely?",
+        a: "🎯 Follow your gut instinct",
+        b: "💙 Believe in your own decisions",
+        c: "✨ Know that you are always growing",
+        rA: "Your intuition is your inner wisdom. 🔮✨",
+        rB: "Trust yourself — you know more than you think. 💫✨",
+        rC: "You don't need to be perfect to be worthy. 💎✨"
+      }
+    ];
+
+    let remaining = [];
+    let current = null;
+
+    function shuffle(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function startOver() {
+      remaining = shuffle([...allQuestions]);
+      showNext();
+    }
+
+    function showNext() {
+      if (remaining.length === 0) {
+        remaining = shuffle([...allQuestions]);
+        alert("🎉 You've seen all questions! They've been reshuffled — fresh start! ✨");
+      }
+      current = remaining.shift();
+      document.getElementById('qText').innerText = current.q;
+      document.getElementById('btnA').innerText = current.a;
+      document.getElementById('btnB').innerText = current.b;
+      document.getElementById('btnC').innerText = current.c;
+      document.getElementById('counter').innerText = `${allQuestions.length - remaining.length} / ${allQuestions.length}`;
+      document.getElementById('questionCard').style.display = 'block';
+      document.getElementById('resultBox').classList.remove('show');
+    }
+
+    function pick(choice) {
+      document.getElementById('questionCard').style.display = 'none';
+      document.getElementById('resultText').innerText = current['r' + choice];
+      document.getElementById('resultBox').classList.add('show');
+    }
+
+    function goNext() {
+      showNext();
+    }
+
+    startOver();
+  </script>
+</body>
+</html>
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>✨ What If — Unlimited Questions ✨</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 30px 20px;
+      color: white;
+    }
+    .container { max-width: 600px; margin: 0 auto; }
+    h1 { text-align: center; font-size: 2.5rem; margin-bottom: 8px; }
+    .subtitle { text-align: center; font-size: 1rem; opacity: 0.9; margin-bottom: 20px; }
+    .counter {
+      text-align: center;
+      background: rgba(255,255,255,0.2);
+      display: block;
+      width: fit-content;
+      margin: 0 auto 25px;
+      padding: 8px 20px;
+      border-radius: 25px;
+      font-size: 0.95rem;
+    }
+    .card {
+      background: white;
+      color: #2c3e50;
+      padding: 35px;
+      border-radius: 20px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+      margin-bottom: 20px;
+    }
+    .question {
+      font-size: 1.3rem;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 30px;
+      color: #667eea;
+      line-height: 1.5;
+    }
+    .option-btn {
+      width: 100%;
+      padding: 18px 20px;
+      margin: 12px 0;
+      border: none;
+      border-radius: 14px;
+      font-size: 1.05rem;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      text-align: left;
+      line-height: 1.4;
+    }
+    .option-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
+    .opt-a { background: linear-gradient(90deg, #3498db, #2980b9); color: white; }
+    .opt-b { background: linear-gradient(90deg, #e74c3c, #c0392b); color: white; }
+    .opt-c { background: linear-gradient(90deg, #2ecc71, #27ae60); color: white; }
+    .result-box {
+      display: none;
+      background: white;
+      color: #2c3e50;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+      animation: fadeIn 0.5s;
+    }
+    .result-box.show { display: block; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .result-text { font-size: 1.1rem; line-height: 1.7; margin: 15px 0 25px; }
+    .btn-row { display: flex; gap: 12px; flex-wrap: wrap; }
+    .next-btn, .reset-btn {
+      flex: 1; min-width: 140px; border: none; padding: 15px; border-radius: 12px;
+      font-size: 1rem; cursor: pointer; color: white;
+    }
+    .next-btn { background: #2ecc71; }
+    .reset-btn { background: #95a5a6; }
   </style>
 </head>
 <body>
