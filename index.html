@@ -3,142 +3,246 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>✨ What If — Explore Possibilities ✨</title>
+  <title>✨ What If — Unlimited Possibilities ✨</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
     body {
       min-height: 100vh;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      padding: 40px 20px;
+      padding: 30px 20px;
       color: white;
     }
-    .container {
-      max-width: 600px;
-      margin: 0 auto;
-    }
+    .container { max-width: 600px; margin: 0 auto; }
     h1 {
       text-align: center;
-      font-size: 2.5rem;
-      margin-bottom: 10px;
+      font-size: 2.3rem;
+      margin-bottom: 5px;
       text-shadow: 0 2px 10px rgba(0,0,0,0.2);
     }
     .subtitle {
       text-align: center;
-      font-size: 1.1rem;
+      font-size: 1rem;
       opacity: 0.9;
-      margin-bottom: 40px;
+      margin-bottom: 20px;
     }
+    .q-counter {
+      text-align: center;
+      font-size: 0.9rem;
+      opacity: 0.85;
+      margin-bottom: 20px;
+      background: rgba(255,255,255,0.15);
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 20px;
+    }
+    .center { text-align: center; }
     .card {
       background: white;
       color: #2c3e50;
-      padding: 35px;
+      padding: 30px;
       border-radius: 20px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-      margin-bottom: 25px;
+      margin-bottom: 20px;
     }
-    .card h2 {
+    .question {
+      font-size: 1.25rem;
+      font-weight: bold;
       text-align: center;
       margin-bottom: 25px;
       color: #667eea;
+      line-height: 1.6;
     }
     .option-btn {
       width: 100%;
-      padding: 18px;
+      padding: 16px 18px;
       margin: 10px 0;
       border: none;
       border-radius: 12px;
-      font-size: 1.1rem;
+      font-size: 1rem;
       cursor: pointer;
       transition: transform 0.2s, box-shadow 0.2s;
+      text-align: left;
+      line-height: 1.5;
     }
     .option-btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.15);
     }
     .option-a { background: linear-gradient(90deg, #3498db, #2980b9); color: white; }
     .option-b { background: linear-gradient(90deg, #e74c3c, #c0392b); color: white; }
-    .option-c { background: linear-gradient(90deg, #2ecc71, #27ae60); color: white; }
     .result-box {
       display: none;
       background: #f8f9fa;
       padding: 25px;
       border-radius: 12px;
       margin-top: 20px;
-      border-left: 5px solid #667eea;
+      border-left: 5px solid #f39c12;
+      animation: fadeIn 0.5s;
     }
-    .result-box.show { display: block; animation: fadeIn 0.5s; }
+    .result-box.show { display: block; }
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
+    .result-box h3 { color: #f39c12; margin-bottom: 12px; }
+    .btn-row { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+    .next-btn {
+      flex: 1;
+      min-width: 140px;
+      background: #2ecc71;
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 10px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
     .reset-btn {
+      flex: 1;
+      min-width: 140px;
       background: #95a5a6;
       color: white;
       border: none;
-      padding: 12px 25px;
-      border-radius: 8px;
-      margin-top: 20px;
-      cursor: pointer;
-      width: 100%;
+      padding: 14px;
+      border-radius: 10px;
       font-size: 1rem;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>✨ What If ✨</h1>
-    <p class="subtitle">Explore possibilities • Make decisions • Discover more</p>
+    <p class="subtitle">Endless possibilities — never run out!</p>
+    <p class="center"><span class="q-counter" id="counter">Loading...</span></p>
 
-    <div class="card" id="choiceSection">
-      <h2>What would you do?</h2>
-      
-      <button class="option-btn option-a" onclick="showResult('A')">
-        🌟 Option A — Take the risk & try something new
-      </button>
-      
-      <button class="option-btn option-b" onclick="showResult('B')">
-        🌿 Option B — Stay steady & keep what you have
-      </button>
-      
-      <button class="option-btn option-c" onclick="showResult('C')">
-        🔄 Option C — Wait & see what happens first
-      </button>
+    <div class="card" id="questionCard">
+      <p class="question" id="questionText"></p>
+      <button class="option-btn option-a" id="btnA" onclick="pickA()"></button>
+      <button class="option-btn option-b" id="btnB" onclick="pickB()"></button>
     </div>
 
     <div class="result-box" id="resultBox">
       <h3 id="resultTitle"></h3>
       <p id="resultText"></p>
-      <button class="reset-btn" onclick="resetChoice()">← Choose Again</button>
+      <div class="btn-row">
+        <button class="next-btn" onclick="nextQuestion()">➡️ Next Question</button>
+        <button class="reset-btn" onclick="restart()">🔄 Start Over</button>
+      </div>
     </div>
   </div>
 
   <script>
-    function showResult(choice) {
-      const results = {
-        A: {
-          title: '🚀 You Chose Option A!',
-          text: 'Brave choice! Taking risks opens doors to new opportunities. Great things never come from comfort zones. Keep exploring! ✨'
-        },
-        B: {
-          title: '🌿 You Chose Option B!',
-          text: 'Wise decision! Stability builds strong foundations. Sometimes the best progress is steady progress. Trust your pace! 💙'
-        },
-        C: {
-          title: '🔄 You Chose Option C!',
-          text: 'Thoughtful choice! Patience gives clarity. Waiting doesn\'t mean stopping — it means preparing. Good things take time! ⏳'
-        }
-      };
+    // ==============================================
+    // YOUR UNLIMITED QUESTIONS — ADD MORE BELOW!
+    // ==============================================
+    const questions = [
+      { q: "What if you could instantly master any skill?", a: "🎯 Learn a practical skill", b: "🎨 Master something just for fun", rA: "Smart choice! Useful skills open doors everywhere. 💪✨", rB: "Wonderful choice! Joy is the best reason to learn. 💙✨" },
+      { q: "What if you found a treasure chest in your backyard?", a: "💰 Use it to build your future", b: "🤝 Share it with family & community", rA: "Practical thinking! Build a strong foundation first. 🏗️✨", rB: "Kind heart! Shared joy doubles itself. 💚✨" },
+      { q: "What if you could relive one day from your past?", a: "✨ Revisit your happiest memory", b: "📚 Return to learn from a mistake", rA: "Beautiful choice! Happy moments give strength. 🌟✨", rB: "Brave choice! Every lesson makes you wiser. 🦅✨" },
+      { q: "What if you knew you couldn't fail — what would you try?", a: "🚀 Chase your biggest dream career", b: "❤️ Follow your true passion", rA: "Go for it! Fear is the only real failure. 🔥✨", rB: "Passion is power! Follow your heart. 💫✨" },
+      { q: "What if you could travel anywhere right now?", a: "🏔️ Explore nature & wilderness", b: "🏙️ Experience cities & cultures", rA: "Nature heals and inspires. 🌿✨", rB: "People make the world rich. 🌍✨" },
+      { q: "What if you could give your younger self advice?", a: "💪 Be brave — take more chances", b: "💙 Be kinder to yourself", rA: "Courage grows with practice. ⚡✨", rB: "You are enough exactly as you are. 🌸✨" },
+      { q: "What if you knew you'd succeed — what would you start?", a: "📖 Learn something new & scary", b: "🤝 Reach out to someone you admire", rA: "Growth happens outside comfort zones. 🌱✨", rB: "Connections are life's treasure. 💌✨" },
+      { q: "What if money didn't matter — what would you do?", a: "🌍 Help people & make a difference", b: "🎨 Create & express yourself freely", rA: "Your heart is pure. The world needs YOU! 🌻✨", rB: "Creation is your gift — it outlives you! 🎭✨" },
+      { q: "What if you could see one year ahead?", a: "🔮 Look ahead to prepare better", b: "✨ Keep it a surprise", rA: "Preparation shows wisdom — but YOU shape your future! 🧭✨", rB: "Mystery makes life magical. Trust your journey! 🌈✨" },
+      { q: "What if you could master any language instantly?", a: "🌏 Speak to connect with everyone", b: "📜 Read stories in their original language", rA: "Every language opens a new heart. 💬✨", rB: "Hear the author's true voice. 📖✨" },
+      { q: "What if you could have any superpower?", a: "⚡ Speed — reach everywhere fast", b: "🌱 Growth — help everything flourish", rA: "Being there matters more than being fast! ⚡✨", rB: "The quietest power changes everything. 🌳✨" },
+      { q: "What if you could change one habit forever?", a: "💭 Stop worrying what others think", b: "🌟 Believe more in your potential", rA: "Freedom begins when you stop seeking approval. 🕊️✨", rB: "Your potential is limitless — only you limit it! 🚀✨" },
+      { q: "What if you met your future self from 10 years ahead?", a: "💬 Ask for wisdom & advice", b: "❤️ Tell them they're doing great", rA: "Listen deeply — but YOU write the story! ✍️✨", rB: "Be kind to yourself through every step. 💫✨" },
+      { q: "What if every written dream came true?", a: "📝 Write bigger, bolder dreams", b: "🙏 Be thoughtful about what you wish", rA: "Aim high! The universe is bigger than doubts. 🌌✨", rB: "Choose wishes with care — they shape you. 💎✨" },
+      { q: "What if you could start fresh today?", a: "🔄 Leave mistakes behind, keep lessons", b: "✨ Bring everything — scars & stories", rA: "Mistakes are tuition — you learned, now shine! 🏆✨", rB: "Your story is your superpower. Don't change it! 🦋✨" },
+      { q: "What if you could know the absolute truth about one thing?", a: "🔭 How the universe began", b: "💜 What makes people truly happy", rA: "Wonder is the beginning of wisdom. 🌌✨", rB: "Connection is the secret to happiness. 💞✨" },
+      { q: "What if you could fix one global problem?", a: "🌍 End hunger & poverty", b: "🌿 Heal the planet & climate", rA: "Justice is the foundation of peace. ⚖️✨", rB: "We protect what we love — love the Earth! 🌏✨" },
+      { q: "What if you could live in any time period?", a: "🏰 The past — see history firsthand", b: "🚀 The future — see what's possible", rA: "We stand on the shoulders of those before us. 🏛️✨", rB: "The future is built by what we do TODAY. 🔭✨" },
+      { q: "What if you could communicate with animals?", a: "🐾 Understand what they feel", b: "🦉 Learn their ancient wisdom", rA: "Empathy connects all living things. 🤝✨", rB: "Nature has been teaching us all along. 🌲✨" },
+      { q: "What if you never had to sleep again?", a: "⏳ Use the extra time to create", b: "☀️ Enjoy peaceful nights & sunrises", rA: "What would you build with extra hours? ⏰✨", rB: "Quiet moments are where life reveals itself. 🌅✨" },
+      { q: "What if you could keep one age forever?", a: "🌻 Stay young & curious always", b: "🦅 Grow wise & experienced", rA: "Curiosity keeps you forever young. 🔍✨", rB: "Wisdom is life's greatest reward. 🦉✨" },
+      { q: "What if you could preserve one memory forever?", a: "💖 A moment of pure love", b: "🏆 A moment you were proudest of", rA: "Love is the only thing that truly lasts. 💗✨", rB: "Pride in yourself is self-love. 🥇✨" },
+      { q: "What if you could master any instrument instantly?", a: "🎸 Play to express yourself", b: "🎹 Play to bring joy to others", rA: "Music says what words cannot. 🎵✨", rB: "Shared music heals hearts. 🎶✨" },
+      { q: "What if you could change your appearance completely?", a: "✨ Try being someone totally new", b: "💙 Keep your face — change your world", rA: "Real change happens on the inside. 💫✨", rB: "Your appearance is not your identity. 👑✨" },
+      { q: "What if you could relive one moment?", a: "🎉 Celebrate a special victory", b: "🤗 Hug someone you miss", rA: "Celebrate every win — big or small! 🎊✨", rB: "Tell people you love them OFTEN. 💌✨" },
+      { q: "What if you could remove one fear?", a: "😨 Fear of failure", b: "😰 Fear of what others think", rA: "Failure is just feedback — keep going! 🔄✨", rB: "Their opinion is not your reality. 🪞✨" },
+      { q: "What if you could learn from the best in any field?", a: "🏆 Sports & leadership", b: "📚 Arts & creativity", rA: "Discipline creates champions. 🏅✨", rB: "Creativity is seeing what others miss. 🎨✨" },
+      { q: "What if you could give a gift to the whole world?", a: "💚 Kindness & compassion", b: "💡 Knowledge & wisdom", rA: "Kindness costs nothing but changes everything. 🌿✨", rB: "Knowledge frees people. 🕯️✨" },
+      { q: "What if you could pause time whenever you want?", a: "⏸️ Catch your breath & rest", b: "🧠 Study & learn deeply", rA: "Rest is not lazy — it's necessary. 🧘✨", rB: "Deep understanding takes time. 📚✨" },
+      { q: "What if you could plant one tree that grows instantly?", a: "🌳 Shade & shelter for all", b: "🌸 Beautiful flowers everywhere", rA: "Service gives lasting shelter. 🌲✨", rB: "Beauty nourishes the soul. 🌺✨" },
+      { q: "What if you could be an expert in one day?", a: "💻 Technology & innovation", b: "❤️ Emotional intelligence", rA: "Build tools that help people. 🛠️✨", rB: "Understanding people is the superpower. 🤝✨" },
+      { q: "What if you could apologize to your younger self?", a: "💙 I'm sorry for being so hard on you", b: "💪 Thank you for not giving up", rA: "Be gentle with your past self. 🕊️✨", rB: "Your resilience is amazing. 💎✨" },
+      { q: "What if you could see beauty in everything?", a: "🌧️ Even in sadness & storms", b: "🌱 Even in mistakes & growth", rA: "Rain nourishes the growth. 🌧️✨", rB: "Mistakes are just how we learn. 🌱✨" },
+      { q: "What if you could protect one person forever?", a: "👨‍👩‍👧‍👦 Your family", b: "🌍 Someone you haven't met yet", rA: "Love begins at home. 🏡✨", rB: "Kindness to strangers changes the world. 🌏✨" },
+      { q: "What if you could speak one truth to everyone?", a: "💫 You are enough exactly as you are", b: "❤️ Kindness matters more than success", rA: "Believe this — it's the most important truth! ✨", rB: "Success without kindness is empty. 💛✨" },
+      { q: "What if you could hear your own heart clearly?", a: "🎯 What do I truly want?", b: "🧭 What is my next right step?", rA: "Your heart knows what matters most. 💓✨", rB: "You don't need the whole map — just the next step! 🗺️✨" },
+      { q: "What if you could start a new tradition today?", a: "📖 Daily gratitude practice", b: "🤝 Weekly kindness action", rA: "Gratitude turns what we have into enough. 🙏✨", rB: "Small daily kindnesses build a beautiful life. 💫✨" },
+      { q: "What if you could rewrite one rule?", a: "💛 Everyone deserves kindness", b: "🌟 Everyone gets to shine", rA: "Kindness should be the default setting. 💛✨", rB: "There's room for everyone at the top. 🌈✨" },
+      { q: "What if you could meet your greatest inspiration?", a: "💬 Ask them how they kept going", b: "❤️ Tell them how they helped you", rA: "They also doubted — keep going anyway! 🏔️✨", rB: "People need to know they matter. 💌✨" },
+      { q: "What if you could create one new holiday?", a: "🎉 Kindness Day", b: "🌱 Growth Day", rA: "Celebrate goodness openly! 💝✨", rB: "Honor how far you've come. 🌱✨" },
+      { q: "What if you could keep only one memory?", a: "💖 Being loved deeply", b: "🔥 Overcoming something hard", rA: "Love is the anchor through every storm. ⚓✨", rB: "Strength proven is strength gained. 🦅✨" },
+      { q: "What if you could make one wish come true for someone else?", a: "🌈 Their biggest dream comes true", b: "🛡️ They never feel alone again", rA: "Helping others soar lifts you too. 🦅✨", rB: "Connection cures loneliness. Be there. 🤝✨" },
+      { q: "What if you could understand your dreams perfectly?", a: "🔮 What is my subconscious telling me?", b: "✨ What do I truly desire?", rA: "Your mind is working even when you rest. 🌙✨", rB: "Desire is the compass — follow it. 🧭✨" },
+      { q: "What if you could give your future self one gift?", a: "📖 Wisdom from today", b: "💪 Confidence to keep going", rA: "Your present builds your future. 🏗️✨", rB: "You will make it — trust the process. 🌅✨" },
+      { q: "What if you could see the good in every situation?", a: "🌱 What can I learn from this?", b: "💫 How can I grow through this?", rA: "Every situation carries a lesson. 📝✨", rB: "Growth is the only real goal. 🌿✨" },
+      { q: "What if you could leave one mark on the world?", a: "🏛️ Something that lasts forever", b: "💙 Kindness that ripples outward", rA: "Legacy is not what we take — it's what we leave. 🏗️✨", rB: "One kind act can touch thousands. 🌊✨" },
+      { q: "What if you could start your day with one reminder?", a: "☀️ Today is a fresh new start", b: "💙 I am worthy of good things", rA: "Every sunrise offers a clean slate. 🌅✨", rB: "You deserve the best life offers. 🌟✨" },
+      { q: "What if you could define success for yourself?", a: "❤️ Being happy & at peace", b: "🤝 Helping others thrive too", rA: "Peace is the ultimate success. 🕊️✨", rB: "Shared success is multiplied success. 🌱✨" },
+      { q: "What if you could hear one encouraging message always?", a: "💪 You are doing better than you think", b: "🚀 Keep going — you're closer than it feels", rA: "Be your own biggest fan. 🎉✨", rB: "Every step forward counts — don't stop! 🏁✨" },
+      { q: "What if you could trust yourself completely?", a: "🎯 Follow your gut instinct", b: "💙 Believe in your own decisions", rA: "Your intuition is your inner wisdom. 🔮✨", rB: "Trust yourself — you know more than you think. 💫✨" }
+    ];
 
-      document.getElementById('choiceSection').style.display = 'none';
-      document.getElementById('resultBox').classList.add('show');
-      document.getElementById('resultTitle').innerText = results[choice].title;
-      document.getElementById('resultText').innerText = results[choice].text;
+    let currentIndex = 0;
+
+    function shuffle(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
     }
 
-    function resetChoice() {
-      document.getElementById('choiceSection').style.display = 'block';
+    questions.sort(() => Math.random() - 0.5);
+
+    function showQuestion() {
+      const q = questions[currentIndex];
+      document.getElementById('questionText').innerText = q.q;
+      document.getElementById('btnA').innerText = q.a;
+      document.getElementById('btnB').innerText = q.b;
+      document.getElementById('counter').innerText = `Question ${currentIndex + 1} of ${questions.length} — Shuffled!`;
+      document.getElementById('questionCard').style.display = 'block';
       document.getElementById('resultBox').classList.remove('show');
     }
+
+    function pickA() {
+      document.getElementById('questionCard').style.display = 'none';
+      document.getElementById('resultTitle').innerText = '✨ Your Choice ✨';
+      document.getElementById('resultText').innerText = questions[currentIndex].rA;
+      document.getElementById('resultBox').classList.add('show');
+    }
+
+    function pickB() {
+      document.getElementById('questionCard').style.display = 'none';
+      document.getElementById('resultTitle').innerText = '✨ Your Choice ✨';
+      document.getElementById('resultText').innerText = questions[currentIndex].rB;
+      document.getElementById('resultBox').classList.add('show');
+    }
+
+    function nextQuestion() {
+      currentIndex++;
+      if (currentIndex >= questions.length) {
+        currentIndex = 0;
+        questions.sort(() => Math.random() - 0.5);
+        alert("🎉 You've completed all questions! They've been shuffled — fresh start! ✨");
+      }
+      showQuestion();
+    }
+
+    function restart() {
+      currentIndex = 0;
+      questions.sort(() => Math.random() - 0.5);
+      showQuestion();
+    }
+
+    showQuestion();
   </script>
 </body>
 </html>
+
